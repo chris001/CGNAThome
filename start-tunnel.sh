@@ -57,7 +57,7 @@ open_firewall_ports () {
 
 install_prereq_if_not_already wget wget
 install_prereq_if_not_already ufw ufw
-install_prereq_if_not_already snapd snapd
+install_prereq_if_not_already snap snapd
 
 install_tunnel_package_if_not_already cloudflared
 
