@@ -1,6 +1,9 @@
 #!/usr/bin/env /usr/bin/bash
 # (c) 2022 Chris Coleman
 # 
+# To run this script:
+# wget -O - https://github.com/chris001/CGNAThome/raw/main/start-tunnel.sh | bash
+# 
 # To install virtualmin, run this:
 # https://github.com/virtualmin/virtualmin-install/raw/master/virtualmin-install.sh
 #
