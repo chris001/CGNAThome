@@ -1,17 +1,16 @@
 #!/usr/bin/env /usr/bin/bash
 # (c) 2022 Chris Coleman
-# 
-# To run this script:
+#
+# Start a Cloudflare Quick Tunnel. Defaults to https on port 10000, which is Virtualmin's default.
+#
+# To install Virtualmin in default settings, run:
+# wget -O - https://github.com/virtualmin/virtualmin-install/raw/master/virtualmin-install.sh | bash
+#
+# To start a Quick Tunnel for your localhost Virtualmin on running on default port 10000:
 # wget -O - https://github.com/chris001/CGNAThome/raw/main/start-tunnel.sh | bash
 # 
-# To install virtualmin, run this:
-# https://github.com/virtualmin/virtualmin-install/raw/master/virtualmin-install.sh
-#
-# How to setup cf tunnel:
+# How to setup a more permanent CF tunnel. Requires free CF account + your own domain name:
 # https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/installation/
-#
-# ssh into your linux localhost, e.g.:
-# ssh 10.0.2.15
 #
 # This hello-world example relies on trycloudflare.com which does not require a Cloudflare account. 
 # This is useful to getting started quickly with a single command.
@@ -31,11 +30,24 @@
 # to squash away your legacy VPN 
 # (see https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/private-net/ )
 
+# USAGE: ./start-tunnel.sh  # defaults to Quick Tunnel for https://localhost:MY_APP_PORT
+#        ./start-tunnel.sh  http # Quick Tunnel for http://localhost:$MY_APP_PORT
+
 CLOUDFLARED_PACKAGE=cloudflared-linux-amd64.deb
+# for Fedora, RedHat, Alma, CentOS, etc RPM Linux:
+#CLOUDFLARED_PACKAGE=cloudflared-linux-amd64.rpm
+
 CLOUDFLARED_URL=https://github.com/cloudflare/cloudflared/releases/latest/download/$CLOUDFLARED_PACKAGE
 # my app virtualmin port is 10000
 MY_APP_PORT=10000
+# default to access app over https.  Add http to command line to access your app over http.
+MY_APP_SCHEME=https
 
+process_args () {
+  if [ -n "$1" ]; then
+    MY_APP_SCHEME=$1
+  fi
+}
 
 install_prereq_if_not_already () {
   if ! command -v $1 > /dev/null; then
@@ -45,8 +57,7 @@ install_prereq_if_not_already () {
 
 install_tunnel_package_if_not_already () {
   if ! command -v $1 > /dev/null; then
-    #rm $CLOUDFLARED_PACKAGE
-    wget $CLOUDFLARED_URL
+    wget -q -N $CLOUDFLARED_URL
     sudo dpkg -i $CLOUDFLARED_PACKAGE
     rm $CLOUDFLARED_PACKAGE
   fi
@@ -67,4 +78,6 @@ install_tunnel_package_if_not_already cloudflared
 
 open_firewall_ports
 
-cloudflared tunnel --url https://localhost:$MY_APP_PORT
+process_args
+
+cloudflared tunnel --url $MY_APP_SCHEME://localhost:$MY_APP_PORT
