@@ -45,6 +45,7 @@ install_prereq_if_not_already () {
 
 install_tunnel_package_if_not_already () {
   if ! command -v $1 > /dev/null; then
+    #rm $CLOUDFLARED_PACKAGE
     wget $CLOUDFLARED_URL
     sudo dpkg -i $CLOUDFLARED_PACKAGE
     rm $CLOUDFLARED_PACKAGE
@@ -66,4 +67,4 @@ install_tunnel_package_if_not_already cloudflared
 
 open_firewall_ports
 
-cloudflared tunnel --url localhost:$MY_APP_PORT
+cloudflared tunnel --url https://localhost:$MY_APP_PORT
