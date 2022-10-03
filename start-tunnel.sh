@@ -54,7 +54,7 @@ install_tunnel_package_if_not_already () {
 open_firewall_ports () {
   sudo ufw allow ssh
   sudo ufw allow $MY_APP_PORT
-  sudo ufw enable
+  #sudo ufw enable
   #sudo ufw status
 }
 
