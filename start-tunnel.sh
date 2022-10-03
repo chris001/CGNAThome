@@ -33,14 +33,34 @@ CLOUDFLARED_URL=https://github.com/cloudflare/cloudflared/releases/latest/downlo
 # my app virtualmin port is 10000
 MY_APP_PORT=10000
 
-sudo apt install snapd ufw -y
-wget $CLOUDFLARED_URL
-sudo dpkg -i $CLOUDFLARED_PACKAGE
-rm $CLOUDFLARED_PACKAGE
-sudo snap install ufw -y
-sudo ufw allow ssh
-sudo ufw allow $MY_APP_PORT
-sudo ufw enable
-sudo ufw status
-cloudflared tunnel --url localhost:$MY_APP_PORT
 
+install_prereq_if_not_already () {
+  if ! command -v $1 > /dev/null; then
+    sudo apt -y install $2
+  fi
+}
+
+install_tunnel_package_if_not_already () {
+  if ! command -v $1 > /dev/null; then
+    wget $CLOUDFLARED_URL
+    sudo dpkg -i $CLOUDFLARED_PACKAGE
+    rm $CLOUDFLARED_PACKAGE
+  fi
+}
+
+open_firewall_ports () {
+  sudo ufw allow ssh
+  sudo ufw allow $MY_APP_PORT
+  sudo ufw enable
+  #sudo ufw status
+}
+
+install_prereq_if_not_already wget wget
+install_prereq_if_not_already ufw ufw
+install_prereq_if_not_already snapd snapd
+
+install_tunnel_package_if_not_already cloudflared
+
+open_firewall_ports
+
+cloudflared tunnel --url localhost:$MY_APP_PORT
