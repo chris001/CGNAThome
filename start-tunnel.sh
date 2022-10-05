@@ -60,7 +60,7 @@ install_tunnel_package_if_not_already () {
     #wget -q -N $CLOUDFLARED_URL
     #sudo dpkg -i $CLOUDFLARED_PACKAGE
     #rm $CLOUDFLARED_PACKAGE
-    sudo wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -O /usr/local/bin/cloudflared
+    sudo wget -q https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -O /usr/local/bin/cloudflared
     sudo chmod +x /usr/local/bin/cloudflared
     cloudflared update  # easier than detect 6 different linux OS, macos, windows, etc, install repo, update pkg cache, and install.
   fi
@@ -84,5 +84,7 @@ open_firewall_ports
 process_args
 
 echo "NOTE if browsing to the URL (above) takes a long time and fails, then this command may fix it:  sudo ufw enable"
+
+#localhost for new installs of most web apps has a self signed cert so do no verify it.
 
 cloudflared tunnel --url $MY_APP_SCHEME://localhost:$MY_APP_PORT --no-tls-verify
