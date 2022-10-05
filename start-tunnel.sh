@@ -1,12 +1,12 @@
 #!/usr/bin/env /usr/bin/bash
 # (c) 2022 Chris Coleman
 #
-# Start a Cloudflare Quick Tunnel. Defaults to https on port 10000, which is Virtualmin's default.
+# Start a Cloudflare Quick Tunnel. Defaults to https on port 10000 the Virtualmin default port.
 #
 # To install Virtualmin in default settings, run:
 # wget -O - https://github.com/virtualmin/virtualmin-install/raw/master/virtualmin-install.sh | bash
 #
-# To start a Quick Tunnel for your localhost Virtualmin on running on default port 10000:
+# To start a Quick Tunnel for your https localhost Virtualmin on default port 10000:
 # wget -O - https://github.com/chris001/CGNAThome/raw/main/start-tunnel.sh | bash
 # 
 # How to setup a more permanent CF tunnel. Requires free CF account + your own domain name:
@@ -35,7 +35,7 @@
 
 CLOUDFLARED_PACKAGE=cloudflared-linux-amd64.deb
 # for Fedora, RedHat, Alma, CentOS, etc RPM Linux:
-#CLOUDFLARED_PACKAGE=cloudflared-linux-amd64.rpm
+#CLOUDFLARED_PACKAGE=cloudflared-linux-x86_64.rpm
 
 CLOUDFLARED_URL=https://github.com/cloudflare/cloudflared/releases/latest/download/$CLOUDFLARED_PACKAGE
 # my app virtualmin port is 10000
@@ -57,9 +57,12 @@ install_prereq_if_not_already () {
 
 install_tunnel_package_if_not_already () {
   if ! command -v $1 > /dev/null; then
-    wget -q -N $CLOUDFLARED_URL
-    sudo dpkg -i $CLOUDFLARED_PACKAGE
-    rm $CLOUDFLARED_PACKAGE
+    #wget -q -N $CLOUDFLARED_URL
+    #sudo dpkg -i $CLOUDFLARED_PACKAGE
+    #rm $CLOUDFLARED_PACKAGE
+    sudo wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -O /usr/local/bin/cloudflared
+    sudo chmod +x /usr/local/bin/cloudflared
+    cloudflared update  # easier than detect 6 different linux OS, macos, windows, etc, install repo, update pkg cache, and install.
   fi
 }
 
