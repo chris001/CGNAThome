@@ -4,10 +4,10 @@
 # Start a Cloudflare Quick Tunnel. Defaults to https on port 10000 the Virtualmin default port.
 #
 # To install Virtualmin in default settings, run:
-# wget -O - https://github.com/virtualmin/virtualmin-install/raw/master/virtualmin-install.sh | bash
+# wget -q -O - https://github.com/virtualmin/virtualmin-install/raw/master/virtualmin-install.sh | bash
 #
 # To start a Quick Tunnel for your https localhost Virtualmin on default port 10000:
-# wget -O - https://github.com/chris001/CGNAThome/raw/main/start-tunnel.sh | bash
+# wget -q -O - https://github.com/chris001/CGNAThome/raw/main/start-tunnel.sh | bash
 # 
 # How to setup a more permanent CF tunnel. Requires free CF account + your own domain name:
 # https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/installation/
