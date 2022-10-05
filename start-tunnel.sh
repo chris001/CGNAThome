@@ -83,4 +83,6 @@ open_firewall_ports
 
 process_args
 
-cloudflared tunnel --url $MY_APP_SCHEME://localhost:$MY_APP_PORT
+echo "NOTE if browsing to the URL (above) takes a long time and fails, then this command may fix it:  sudo ufw enable"
+
+cloudflared tunnel --url $MY_APP_SCHEME://localhost:$MY_APP_PORT --no-tls-verify
