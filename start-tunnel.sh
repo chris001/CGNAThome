@@ -1,7 +1,8 @@
 #!/usr/bin/env /usr/bin/bash
 # (c) 2022 Chris Coleman
 #
-# Start a Cloudflare Quick Tunnel. Defaults to https on port 10000 the Virtualmin default port.
+# Start a Cloudflare Quick Tunnel with instant temporary https URL. 
+#   Defaults to the Virtualmin default port, https localhost port 10000,
 #
 # To install Virtualmin in default settings, run:
 # wget -q -O - https://github.com/virtualmin/virtualmin-install/raw/master/virtualmin-install.sh | bash
@@ -33,11 +34,8 @@
 # USAGE: ./start-tunnel.sh  # defaults to Quick Tunnel for https://localhost:MY_APP_PORT
 #        ./start-tunnel.sh  http # Quick Tunnel for http://localhost:$MY_APP_PORT
 
-CLOUDFLARED_PACKAGE=cloudflared-linux-amd64.deb
-# for Fedora, RedHat, Alma, CentOS, etc RPM Linux:
-#CLOUDFLARED_PACKAGE=cloudflared-linux-x86_64.rpm
-
-CLOUDFLARED_URL=https://github.com/cloudflare/cloudflared/releases/latest/download/$CLOUDFLARED_PACKAGE
+CLOUDFLARED_BINARY=cloudflared-linux-amd64
+CLOUDFLARED_URL=https://github.com/cloudflare/cloudflared/releases/latest/download/$CLOUDFLARED_BINARY
 # my app virtualmin port is 10000
 MY_APP_PORT=10000
 # default to access app over https.  Add http to command line to access your app over http.
@@ -57,12 +55,9 @@ install_prereq_if_not_already () {
 
 install_tunnel_package_if_not_already () {
   if ! command -v $1 > /dev/null; then
-    #wget -q -N $CLOUDFLARED_URL
-    #sudo dpkg -i $CLOUDFLARED_PACKAGE
-    #rm $CLOUDFLARED_PACKAGE
-    sudo wget -q https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -O /usr/local/bin/cloudflared
+    sudo wget -q $CLOUDFLARED_URL -O /usr/local/bin/cloudflared
     sudo chmod +x /usr/local/bin/cloudflared
-    cloudflared update  # easier than detect 6 different linux OS, macos, windows, etc, install repo, update pkg cache, and install.
+    cloudflared update  # easier than detect 6 different linux OS, macos, windows, etc, install repo, update pkg cache, and install from repo.
   fi
 }
 
@@ -83,8 +78,8 @@ open_firewall_ports
 
 process_args
 
-echo "NOTE if browsing to the URL (above) takes a long time and fails, then this command may fix it:  sudo ufw enable"
+echo "NOTE if browsing to your temporary URL (above) takes a long time and fails, \nprobably a firewall issue, you could fix it with this command \nand reload the page:  sudo ufw enable"
 
-#localhost for new installs of most web apps has a self signed cert so do no verify it.
+#localhost for new installs of most web apps has a self signed cert, do not verify the cert.
 
 cloudflared tunnel --url $MY_APP_SCHEME://localhost:$MY_APP_PORT --no-tls-verify
