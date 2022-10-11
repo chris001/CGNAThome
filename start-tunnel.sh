@@ -53,6 +53,15 @@ install_prereq_if_not_already () {
   fi
 }
 
+open_firewall_ports () {
+  #sudo ufw allow ssh
+  sudo ufw allow $MY_APP_PORT
+  #sudo ufw enable
+  #sudo ufw status
+}
+
+
+# step 1
 install_tunnel_package_if_not_already () {
   if ! command -v $1 > /dev/null; then
     sudo wget -q $CLOUDFLARED_URL -O /usr/local/bin/cloudflared
@@ -61,12 +70,170 @@ install_tunnel_package_if_not_already () {
   fi
 }
 
-open_firewall_ports () {
-  #sudo ufw allow ssh
-  sudo ufw allow $MY_APP_PORT
-  #sudo ufw enable
-  #sudo ufw status
+# Step 2. Authenticate cloudflared
+# This command will give a URL (server) or open browser (desktop).
+# In browser login to your CF account
+# If new doamin, Click Add domain, copy paste CF DNS servers to your registar domain DNS server settings,
+# In  CF account, Select your hostname
+# CF will generate a cert.pem file and save it in your default cloudflared directory.
+login_cloudflare_tunnel () {
+  cloudflared tunnel login
 }
+
+
+# 3. Create a tunnel and give it a name.
+# creates a tunnel by relating name to UUID. No connection exist yet.
+# generates tunnel crediential file in default cloudflared directory.
+# creates a subdomain of .cfargotunnel.com (? .trycloudflare.com ?)
+# Note UUID and path to tunnel crediential file, will use these soon.
+create_tunnel_uuid_json_file_from_name () {
+  cloudflared tunnel create $1
+  # response contains "Created tunnel mike with id <UUID>"
+}
+
+
+# 4. Create tunnel config file
+create_tunnel_config_file () {
+  cat << EOF > $HOME/.cloudflared/config.yml
+*** start working config.yml ****
+#url: https://localhost:10000
+tunnel: abbcef39-3cb1-41c8-b194-7034d01d429f
+credentials-file: /home/chris/.cloudflared/abbcef39-3cb1-41c8-b194-7034d01d429f.json
+originRequest: # Top-level configuration
+  connectTimeout: 30s
+  #noTLSVerify: true
+ingress:
+#   #This service inherits all configuration from the root-level config, i.e.
+#   #it will use a connectTimeout of 30 seconds.
+  - hostname: chris001.tk
+    service: https://localhost:10000
+    originRequest:
+      noTLSVerify: true
+  - hostname: webmail.chris001.tk
+    #url: https://chris001.tk:20000
+    service: https://localhost:20000
+    originRequest:
+      noTLSVerify: true
+#  - hostname: gitlab-ssh.widgetcorp.tech
+#    service: ssh://localhost:22
+#  - service: http_status:404
+#  # This service overrides some root-level config.
+#  - service: localhost:8002
+
+#    originRequest:
+#      connectTimeout: 10s
+#      disableChunkedEncoding: true
+#      noTLSVerify: true
+# Some built-in services (like `http_status`) don't use any config. So, this
+# rule will inherit all the config, but won't actually use it (because it just
+# responds with HTTP 404).
+  - service: http_status:404
+*** end working config.yml ***
+EOF
+}
+
+
+# Step 4.5 
+# For persistent tunnel with user's domain/subdomain name!
+install_cloudflared_service () {  
+  sudo cloudflared service install  
+  ## install auto updater
+  croncommand="cloudflared update"
+  cronfile="/etc/cron.hourly/cloudflared-updater"
+  tmpcronfile="./temp-cron-xyz"
+  sudo echo "$croncommand" >> $tmpcronfile
+  sudo mv $tmpcronfile $cronfile
+  sudo chmod +x $cronfile
+  sudo chown root:root $cronfile
+}
+
+
+# start service
+start_tunnel_service () {
+  sudo systemctl start cloudflared
+  # You can now route traffic thru your tunnel!, Step 5 below.
+}
+
+
+# View status of service
+view_status_of_tunnel () {
+  sudo systemctl status cloudflared
+}
+
+
+# If you add IP routes or otherwise change the configuration, 
+# restart the service to load the new configuration
+restart_tunnel () {
+  sudo systemctl restart cloudflared
+}
+
+
+# 5. Start routing traffic.
+# Now assign a CNAME DNS record that points traffic to your tunnel subdomain.
+route_traffic_to_app () {
+  #If you are connecting an application
+  cloudflared tunnel route dns <UUID or NAME> <hostname>
+  #cloudflared tunnel route dns mike chris001.tk
+  #Failed to add route: code: 1003, reason: An A, AAAA, or CNAME record with that host already exists.
+  #Delete A and AAAA records?
+  #Yes! Success shows:
+  #INF Added CNAME chris001.tk which will route to this tunnel tunnelID=<UUID>
+}
+
+# 5b. Route traffic to network
+route_traffic_to_network () {
+  #If you are connecting a network
+  #Add the IP/CIDR you would like to be routed through the tunnel.
+  cloudflared tunnel route ip add <IP/CIDR> <UUID or NAME>
+}
+
+# 5.c
+#You can confirm that the route has been successfully established by running:
+confirm_tunnel_route {
+  cloudflared tunnel route ip show
+}
+
+# 6. Run the tunnel
+#Run the tunnel to proxy incoming traffic from the tunnel to any number of 
+#services running locally on your origin.
+run_tunnel () {
+  cloudflared tunnel run <UUID or NAME>
+  #cloudflared tunnel run mike
+  # If your configuration file has a custom name or is not in the 
+  # .cloudflared directory, add the --config flag and specify the path.
+  #cloudflared tunnel --config /path/your-config-file.yaml run
+}
+
+# 7. Check the tunnel info
+#Your tunnel configuration is complete! If you want to get information 
+#on the tunnel you just created, you can run:
+tunnel_info () {
+  cloudflared tunnel info
+}
+
+
+# step 8 (optional)
+remove_cloudflared_service () {
+  sudo cloudflared service uninstall
+  cronfile="/etc/cron.hourly/cloudflared-updater"
+  sudo chmod -x $cronfile
+  sudo rm $cronfile
+  sudo systemctl daemon-reload
+}
+
+
+
+# View status of tunnel service
+get_status_tunnel_service () {
+  sudo systemctl status cloudflared
+}
+
+# If you add IP routes or otherwise change the configuration, 
+# restart the service to load the new configuration
+restart_tunnel_service () {
+  sudo systemctl restart cloudflared
+}
+
 
 install_prereq_if_not_already wget wget
 install_prereq_if_not_already ufw ufw
