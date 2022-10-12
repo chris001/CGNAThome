@@ -153,10 +153,12 @@ install_cloudflared_service () {
   #     config.yml (configs and rules for routing to user's local services).
   sudo mkdir -p /usr/local/etc/cloudflared/
   sudo cp ~/.cloudflared/* /usr/local/etc/cloudflared/
-  #Modify (sed/awk) 2 lines inside this yml file like this:
+  #Modify (sed) 2 lines inside config.yml file like this:
   # tunnel: <tunnel uuid>
   # credentials-file: /home/$USER/.cloudflared/<tunnel uuid>.json  ##### to:
   # credentials-file: /usr/local/etc/cloudflared/<tunnel uuid>.json
+  usrlocaletc=''
+  sed -i "s/\/home\/chris\/.cloudflared/\/usr\/local\/etc\/cloudflared/g" "/usr/local/etc/cloudflared/config.yml"
 
   sudo cloudflared service install  
   ## install auto updater
