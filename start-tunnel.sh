@@ -76,7 +76,7 @@ open_firewall_ports () {
 
 # Step 1d process the command line args
 process_args () {
-  if [ -n "$1" ]; then {
+  if [ $# -ne 0 ]; then {
     TUNNEL_NAME=$1
     TUNNEL_MODE_MY_DOMAIN_NAME=1
   }
