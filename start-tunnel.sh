@@ -157,7 +157,7 @@ install_cloudflared_service () {
   # tunnel: <tunnel uuid>
   # credentials-file: /home/$USER/.cloudflared/<tunnel uuid>.json  ##### to:
   # credentials-file: /usr/local/etc/cloudflared/<tunnel uuid>.json
-  usrlocaletc=''
+  #usrlocaletccloudflared=''
   sudo sed -i "s/\/home\/chris\/.cloudflared/\/usr\/local\/etc\/cloudflared/g" "/usr/local/etc/cloudflared/config.yml"
 
   sudo cloudflared service install  
