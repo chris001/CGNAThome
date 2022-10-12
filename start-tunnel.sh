@@ -255,14 +255,17 @@ install_tunnel_package_if_not_already cloudflared
 open_firewall_ports
 
 #Step 1d  process the command line args
-if [ $# -gt 0 ]; then {
+if [ $# -eq 2 ]; then {
   TUNNEL_NAME=$1
+  TUNNEL_HOSTNAME=$2
   TUNNEL_MODE_MY_DOMAIN_NAME=1
   }
-  else {
+  else if [ $0 -eq 0 ] {
     TUNNEL_MODE_MY_DOMAIN_NAME=0
   }
-  echo "$0: TUNNEL_NAME: $TUNNEL_NAME"
+  else {
+    echo "Usage: $0 [tunnel_name tunnel_hostname]"
+  }
 fi
 
 if [[ $TUNNEL_MODE_MY_DOMAIN_NAME -ne 0 ]]; then {
