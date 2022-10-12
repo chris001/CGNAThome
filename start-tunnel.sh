@@ -1,3 +1,4 @@
+#!/usr/bin/env /usr/bin/bash
 # (c) 2022 Chris Coleman
 #
 # Start a Cloudflare Quick Tunnel with instant temporary https URL. 
@@ -49,8 +50,8 @@ TUNNEL_IP_CIDR="blank_optional_IP_CIDR"     #  User provided local IP subnet for
 
 # Step 1a
 install_prereq_if_not_already () {
-  if ! command -v $1 > /dev/null; then
-    sudo apt -y install $2
+  if ! command -v "$1" > /dev/null; then
+    sudo apt -y install "$2"
   fi
 }
 
@@ -58,7 +59,7 @@ install_prereq_if_not_already () {
 install_tunnel_package_if_not_already () {
   CLOUDFLARED_BINARY=cloudflared-linux-amd64
   CLOUDFLARED_URL=https://github.com/cloudflare/cloudflared/releases/latest/download/$CLOUDFLARED_BINARY
-  if ! command -v $1 > /dev/null; then
+  if ! command -v "$1" > /dev/null; then
     tunnel_binary_path="/usr/local/bin/cloudflared"
     sudo wget -q $CLOUDFLARED_URL -O $tunnel_binary_path
     sudo chmod +x $tunnel_binary_path
@@ -107,7 +108,7 @@ create_tunnel_config_file () {
   config_file_path="$HOME/.cloudflared/config.yml"
   MY_APP_URL="$MY_APP_SCHEME://$MY_APP_HOSTNAME:$MY_APP_PORT"
 
-cat << EOF > $config_file_path
+cat << EOF > "$config_file_path"
 #*** start working config.yml ****
 #url: $MY_APP_URL
 tunnel: $TUNNEL_UUID
@@ -137,7 +138,7 @@ ingress:
 #      connectTimeout: 10s
 #      disableChunkedEncoding: true
 #      noTLSVerify: true
-# Some built-in services (like `http_status`) don't use any config. So, this
+# Some built-in services (like http_status) don't use any config. So, this
 # rule will inherit all the config, but won't actually use it (because it just
 # responds with HTTP 404).
   - service: http_status:404
@@ -260,7 +261,7 @@ if [ $# -eq 2 ]; then {
   TUNNEL_HOSTNAME=$2
   TUNNEL_MODE_MY_DOMAIN_NAME=1
   }
-  elif [ $0 -eq 0 ]; then {
+  elif [ "$0" -eq 0 ]; then {
     TUNNEL_MODE_MY_DOMAIN_NAME=0
   }
   else {
@@ -278,11 +279,11 @@ if [[ $TUNNEL_MODE_MY_DOMAIN_NAME -ne 0 ]]; then {
 
   #Step 3 Create a tunnel and give it a name. 
   # CREATES <UUID>.json
-  create_tunnel_uuid_json_file_from_name $TUNNEL_NAME
+  create_tunnel_uuid_json_file_from_name "$TUNNEL_NAME"
 
   #Step 4 Create tunnel config file. 
   # CREATES config.yml
-  create_tunnel_config_file $TUNNEL_UUID
+  create_tunnel_config_file "$TUNNEL_UUID"
 
   # Step 4.5a  For persistent tunnel with user's domain/subdomain name
   #   (or if none provided to CF, CF provide temp hostname?)
