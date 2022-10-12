@@ -185,7 +185,7 @@ view_status_of_tunnel () {
 # 5a. Start route traffic to app. CF creates DNS record, points to your tunnel subdomain.
 route_traffic_to_app () {
   #If you are connecting an application
-  cloudflared tunnel route dns $TUNNEL_NAME $TUNNEL_HOSTNAME
+  cloudflared tunnel route dns --overwrite-dns $TUNNEL_NAME $TUNNEL_HOSTNAME
   #cloudflared tunnel route dns mike myhostname.tld
   #Failed to add route: code: 1003, reason: An A, AAAA, or CNAME record with that host already exists.
   #Delete A and AAAA records?
