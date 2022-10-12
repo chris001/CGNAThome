@@ -121,7 +121,7 @@ create_tunnel_config_file () {
   MY_APP_URL="$MY_APP_SCHEME://$MY_APP_HOSTNAME:$MY_APP_PORT"
 
 cat << EOF > $config_file_path
-*** start working config.yml ****
+#*** start working config.yml ****
 #url: $MY_APP_URL
 tunnel: $TUNNEL_UUID
 credentials-file: $HOME/.cloudflared/$TUNNEL_UUID.json
@@ -154,7 +154,7 @@ ingress:
 # rule will inherit all the config, but won't actually use it (because it just
 # responds with HTTP 404).
   - service: http_status:404
-*** end working config.yml ***
+#*** end working config.yml ***
 EOF
 }
 
