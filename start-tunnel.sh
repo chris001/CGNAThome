@@ -270,7 +270,7 @@ open_firewall_ports
 #Step 1d
 process_args
 
-if [ -n "$TUNNEL_MODE_MY_DOMAIN_NAME" ]; then {
+if [[ $TUNNEL_MODE_MY_DOMAIN_NAME -ne 0 ]]; then {
   # Step 2 Login (authenticate) for Cloudflare Tunnel
   # CREATES cert.pem
   login_cloudflare_tunnel
