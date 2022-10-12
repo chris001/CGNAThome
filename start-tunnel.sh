@@ -1,4 +1,4 @@
-#!/usr/bin/env /usr/bin/bash
+#!/usr/bin/bash
 # (c) 2022 Chris Coleman
 #
 # Start a Cloudflare Quick Tunnel with instant temporary https URL. 
