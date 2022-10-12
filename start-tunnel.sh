@@ -294,8 +294,8 @@ if [[ $TUNNEL_MODE_MY_DOMAIN_NAME -ne 0 ]]; then {
   # Step 4.5b Start service
   start_tunnel_service
 
-  # Step 4.5c  View status of service
-  view_status_of_tunnel
+  ## Step 4.5c  View status of service. Requires user input to continue. Skip this.
+  ##view_status_of_tunnel
 
   # 5a. Start routing traffic to app.
   # Now CF assigns a CNAME DNS record that points traffic to your tunnel subdomain/domain.
