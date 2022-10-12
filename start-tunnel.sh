@@ -1,4 +1,3 @@
-#!/usr/bin/env /usr/bin/bash
 # (c) 2022 Chris Coleman
 #
 # Start a Cloudflare Quick Tunnel with instant temporary https URL. 
@@ -42,7 +41,7 @@ MY_APP_PORT=10000
 # my app hostname
 MY_APP_HOSTNAME="localhost"
 
-TUNNEL_NAME=""                 # User chosen tunnel name. Blank =  tunnel with CF generated temp subdomain of ".trycloudflare.com".
+TUNNEL_NAME="<Unnamed>"                 # User chosen tunnel name. Blank =  tunnel with CF generated temp subdomain of ".trycloudflare.com".
 TUNNEL_MODE_MY_DOMAIN_NAME=0   # 0 = CF generate temp subdomain of ".trycloudflare.com". 1 = user's own domain/subdomain host name.
 TUNNEL_UUID="blank_UUID"       # CF generated tunnel Unique ID 
 TUNNEL_HOSTNAME="blank_Hostname"  # (If they provide a command line arg,it must be either Hostname or subnet) user provided custom domain hostname or subdomain.
@@ -76,13 +75,14 @@ open_firewall_ports () {
 
 # Step 1d process the command line args
 process_args () {
-  if [ $# -ne 0 ]; then {
+  if [ $# -gt 0 ]; then {
     TUNNEL_NAME=$1
     TUNNEL_MODE_MY_DOMAIN_NAME=1
   }
   else {
     TUNNEL_MODE_MY_DOMAIN_NAME=0
   }
+  echo "$0: TUNNEL_NAME: $TUNNEL_NAME"
   fi
 }
 
@@ -272,7 +272,7 @@ process_args
 
 if [[ $TUNNEL_MODE_MY_DOMAIN_NAME -ne 0 ]]; then {
   
-  echo "TUNNEL NAME: $TUNNEL_NAME"
+  echo "$0: TUNNEL NAME: $TUNNEL_NAME"
   
   # Step 2 Login (authenticate) for Cloudflare Tunnel
   # CREATES cert.pem
@@ -315,7 +315,7 @@ if [[ $TUNNEL_MODE_MY_DOMAIN_NAME -ne 0 ]]; then {
   tunnel_info
 }
 else {
-  echo "STARTING TUNNEL WITH TEMP TRYCLOUSFLARE.COM HOSTNAME."
+  echo "$0: STARTING TUNNEL WITH TEMP TRYCLOUSFLARE.COM HOSTNAME."
   # Step 10 Start tunnel with temp tryCF hostname
   start_tunnel
 }
