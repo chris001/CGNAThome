@@ -260,7 +260,7 @@ if [ $# -eq 2 ]; then {
   TUNNEL_HOSTNAME=$2
   TUNNEL_MODE_MY_DOMAIN_NAME=1
   }
-  else if [ $0 -eq 0 ] {
+  else if [ $0 -eq 0 ]; then {
     TUNNEL_MODE_MY_DOMAIN_NAME=0
   }
   else {
