@@ -73,19 +73,6 @@ open_firewall_ports () {
   sudo ufw allow $MY_APP_PORT
 }
 
-# Step 1d process the command line args
-process_args () {
-  if [ $# -gt 0 ]; then {
-    TUNNEL_NAME=$1
-    TUNNEL_MODE_MY_DOMAIN_NAME=1
-  }
-  else {
-    TUNNEL_MODE_MY_DOMAIN_NAME=0
-  }
-  echo "$0: TUNNEL_NAME: $TUNNEL_NAME"
-  fi
-}
-
 # Step 2. Authenticate cloudflared
 # This command will output the URL (server) or open browser to the URL (desktop).
 # In browser login to your CF account
@@ -267,11 +254,18 @@ install_tunnel_package_if_not_already cloudflared
 #Step 1c
 open_firewall_ports
 
-#Step 1d
-process_args
+#Step 1d  process the command line args
+if [ $# -gt 0 ]; then {
+  TUNNEL_NAME=$1
+  TUNNEL_MODE_MY_DOMAIN_NAME=1
+  }
+  else {
+    TUNNEL_MODE_MY_DOMAIN_NAME=0
+  }
+  echo "$0: TUNNEL_NAME: $TUNNEL_NAME"
+fi
 
 if [[ $TUNNEL_MODE_MY_DOMAIN_NAME -ne 0 ]]; then {
-  
   echo "$0: TUNNEL NAME: $TUNNEL_NAME"
   
   # Step 2 Login (authenticate) for Cloudflare Tunnel
