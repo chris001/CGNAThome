@@ -212,7 +212,7 @@ route_traffic_to_network () {
 
 # 5c. (optional) Confirm route is successful.
 #You can confirm that the route has been successfully established by running:
-confirm_tunnel_route {
+confirm_tunnel_route () {
   cloudflared tunnel route ip show
 }
 
