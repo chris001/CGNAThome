@@ -271,6 +271,9 @@ open_firewall_ports
 process_args
 
 if [[ $TUNNEL_MODE_MY_DOMAIN_NAME -ne 0 ]]; then {
+  
+  echo "TUNNEL NAME: $TUNNEL_NAME"
+  
   # Step 2 Login (authenticate) for Cloudflare Tunnel
   # CREATES cert.pem
   login_cloudflare_tunnel
