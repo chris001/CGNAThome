@@ -314,7 +314,9 @@ if [[ $TUNNEL_MODE_MY_DOMAIN_NAME -ne 0 ]]; then {
   # on the tunnel you just created, you can run:
   tunnel_info
 }
+else {
+  echo "STARTING TUNNEL WITH TEMP TRYCLOUSFLARE.COM HOSTNAME."
+  # Step 10 Start tunnel with temp tryCF hostname
+  start_tunnel
+}
 fi
-
-# Step 10 Start tunnel
-start_tunnel
