@@ -165,7 +165,7 @@ install_cloudflared_service () {
   croncommand="cloudflared update"
   cronfile="/etc/cron.hourly/cloudflared-updater"
   tmpcronfile="./temp-cron-xyz"
-  sudo echo "$croncommand" >> $tmpcronfile
+  echo "$croncommand" | sudo tee -a "$tmpcronfile"
   sudo mv $tmpcronfile $cronfile
   sudo chown root:root $cronfile
   sudo chmod +x $cronfile
