@@ -270,8 +270,8 @@ if [ $# -eq 2 ]; then {
 fi
 
 if [[ $TUNNEL_MODE_MY_DOMAIN_NAME -ne 0 ]]; then {
-  echo "$0: TUNNEL NAME: $TUNNEL_NAME"
-  
+  echo "$0: TUNNEL_NAME: $TUNNEL_NAME  TUNNEL_HOSTNAME: $TUNNEL_HOSTNAME"
+
   # Step 2 Login (authenticate) for Cloudflare Tunnel
   # CREATES cert.pem
   login_cloudflare_tunnel
