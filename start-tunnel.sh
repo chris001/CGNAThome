@@ -265,6 +265,7 @@ if [ $# -eq 2 ]; then {
   }
   else {
     echo "Usage: $0 [tunnel_name tunnel_hostname]"
+    exit 1
   }
 fi
 
