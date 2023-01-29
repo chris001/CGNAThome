@@ -1,0 +1,43 @@
+# module.info
+name=Cloudflare Argo Tunnel for Webmin
+description=Create and configure a Cloudflare Argo Tunnel for your Webmin server
+version=1.0
+
+# tunnel_setup.pl
+use LWP::UserAgent;
+use JSON;
+
+my $ua = LWP::UserAgent->new;
+
+# Your Cloudflare API credentials
+my $email = "your_email";
+my $api_key = "your_api_key";
+
+# Request headers
+my $headers = {
+  'X-Auth-Email' => $email,
+  'X-Auth-Key' => $api_key,
+  'Content-Type' => 'application/json'
+};
+
+# Request body to create the tunnel
+my $tunnel_request = {
+  "hosts" => [
+    "webmin.example.com"
+  ],
+  "session_affinity" => "None",
+  "routing_policy" => "NoFilter"
+};
+
+# API endpoint to create the tunnel
+my $tunnel_endpoint = "https://api.cloudflare.com/client/v4/tunnels";
+
+# Send the API request to create the tunnel
+my $response = $ua->post($tunnel_endpoint, Content => to_json($tunnel_request), %$headers);
+
+# Check the response for success
+if ($response->is_success) {
+  print "Tunnel created successfully\n";
+} else {
+  print "Error creating tunnel: " . $response->status_line . "\n";
+}
